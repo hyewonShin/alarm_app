@@ -49,13 +49,16 @@ class Home extends StatelessWidget {
   }
 
   Widget _etcAlarm(AlarmModel alarm, bool isEditMode) {
+    print(alarm.id);
     return Row(
       children: [
         if (isEditMode)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.find<AlarmController>().removeAlarm(alarm.id);
+              },
               child: Icon(Icons.remove_circle, color: Colors.red),
             ),
           ),

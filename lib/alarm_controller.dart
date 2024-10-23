@@ -28,4 +28,9 @@ class AlarmController extends GetxController {
     isEditMode = !isEditMode;
     update();
   }
+
+  void removeAlarm(String id) {
+    alarmList.removeWhere((element) => element.id == id);
+    update();
+  }
 }

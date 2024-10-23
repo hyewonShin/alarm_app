@@ -1,4 +1,7 @@
+import 'package:uuid/uuid.dart';
+
 class AlarmModel {
+  String id;
   int hour;
   int minute;
   bool isOn;
@@ -7,5 +10,5 @@ class AlarmModel {
     required this.hour,
     required this.minute,
     this.isOn = true,
-  });
+  }) : id = Uuid().v4();
 }
