@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/alarm_controller.dart';
+import 'package:flutter_application_1/alarm_model.dart';
 import 'package:flutter_application_1/alarm_write_page.dart';
 import 'package:get/get.dart';
 
@@ -46,7 +48,7 @@ class Home extends StatelessWidget {
     );
   }
 
-  Widget _etcAlarm() {
+  Widget _etcAlarm(AlarmModel alarm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       decoration: BoxDecoration(
@@ -60,10 +62,11 @@ class Home extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('오전',
+                  Text(alarm.hour < 12 ? '오전' : '오후',
                       style: TextStyle(fontSize: 25, color: Color(0xff8d8d93))),
                   SizedBox(width: 10),
-                  Text('4:00',
+                  Text(
+                      '${alarm.hour.toString().padLeft(2, '0')}:${alarm.minute.toString().padLeft(2, '0')}',
                       style: TextStyle(
                           fontSize: 60,
                           color: Color(0xff8d8d93),
@@ -75,7 +78,7 @@ class Home extends StatelessWidget {
                 onChanged: (value) {
                   print(value);
                 },
-                value: false,
+                value: alarm.isOn,
               ),
             ],
           ),
@@ -127,7 +130,21 @@ class Home extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            ...List.generate(5, (index) => _etcAlarm()),
+            GetBuilder<AlarmController>(builder: (controller) {
+              if (controller.alarmList.isEmpty) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Text('등록된 알람이 없습니다.',
+                      style: TextStyle(fontSize: 18, color: Color(0xff8d8d93))),
+                );
+              }
+              return Column(
+                children: controller.alarmList.map((alarm) {
+                  return _etcAlarm(alarm);
+                }).toList(),
+              );
+            })
           ],
         ),
       ),
