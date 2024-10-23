@@ -5,6 +5,8 @@ class AlarmController extends GetxController {
   int hour = 0;
   int minute = 0;
 
+  bool isEditMode = false;
+
   List<AlarmModel> alarmList = [];
 
   void setHour(int hour) {
@@ -19,6 +21,11 @@ class AlarmController extends GetxController {
 
   void saveAlarm() {
     alarmList.add(AlarmModel(hour: hour, minute: minute));
+    update();
+  }
+
+  void toggleEditMode() {
+    isEditMode = !isEditMode;
     update();
   }
 }
