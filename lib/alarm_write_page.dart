@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/alarm_controller.dart';
 import 'package:get/get.dart';
 
 class AlarmWritePage extends StatelessWidget {
@@ -26,7 +27,10 @@ class AlarmWritePage extends StatelessWidget {
         title: Text('알람 추가', style: TextStyle(color: Colors.white)),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Get.find<AlarmController>().saveAlarm();
+              Get.back();
+            },
             child: Padding(
               padding: const EdgeInsets.only(right: 15),
               child: Text(
@@ -45,13 +49,17 @@ class AlarmWritePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              '오전',
-              style: TextStyle(
-                fontWeight: FontWeight.w100,
-                fontSize: 28,
-                color: Color(0xffababac),
-              ),
+            GetBuilder<AlarmController>(
+              builder: (controller) {
+                return Text(
+                  controller.hour < 12 ? '오전' : '오후',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w100,
+                    fontSize: 28,
+                    color: Color(0xffababac),
+                  ),
+                );
+              },
             ),
             SizedBox(width: 15),
             SizedBox(
@@ -80,6 +88,10 @@ class AlarmWritePage extends StatelessWidget {
                       border: InputBorder.none,
                       counterText: '',
                     ),
+                    onChanged: (String hour) {
+                      if (hour == '') return;
+                      Get.find<AlarmController>().setHour(int.parse(hour));
+                    },
                   ),
                 ),
               ),
@@ -100,7 +112,7 @@ class AlarmWritePage extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,
-                      RangeTextInputFormatter(1, 59),
+                      RangeTextInputFormatter(0, 59),
                     ],
                     style: TextStyle(
                       color: Colors.white,
@@ -111,6 +123,10 @@ class AlarmWritePage extends StatelessWidget {
                       border: InputBorder.none,
                       counterText: '',
                     ),
+                    onChanged: (String minute) {
+                      if (minute == '') return;
+                      Get.find<AlarmController>().setMinute(int.parse(minute));
+                    },
                   ),
                 ),
               ),
