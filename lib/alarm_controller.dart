@@ -19,8 +19,20 @@ class AlarmController extends GetxController {
     update();
   }
 
-  void saveAlarm() {
-    alarmList.add(AlarmModel(hour: hour, minute: minute));
+  void saveAlarm({String? id}) {
+    if (id != null) {
+      final newAlarmList = alarmList.map((element) {
+        if (element.id == id) {
+          element.hour = hour;
+          element.minute = minute;
+        }
+        return element;
+      }).toList();
+      alarmList = newAlarmList;
+    } else {
+      alarmList.add(AlarmModel(hour: hour, minute: minute));
+    }
+
     update();
   }
 
@@ -32,5 +44,10 @@ class AlarmController extends GetxController {
   void removeAlarm(String id) {
     alarmList.removeWhere((element) => element.id == id);
     update();
+  }
+
+  void editAlarm(AlarmModel alarm) {
+    hour = alarm.hour;
+    minute = alarm.minute;
   }
 }

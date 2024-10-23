@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/alarm_controller.dart';
+import 'package:flutter_application_1/alarm_model.dart';
 import 'package:get/get.dart';
 
-class AlarmWritePage extends StatelessWidget {
-  const AlarmWritePage({super.key});
+class AlarmWritePage extends StatefulWidget {
+  final AlarmModel? alarm;
+  const AlarmWritePage({super.key, this.alarm});
+
+  @override
+  State<AlarmWritePage> createState() => _AlarmWritePageState();
+}
+
+class _AlarmWritePageState extends State<AlarmWritePage> {
+  final hourController = TextEditingController();
+  final minuteController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.alarm != null) {
+      hourController.text = widget.alarm!.hour.toString();
+      minuteController.text = widget.alarm!.minute.toString();
+      Get.find<AlarmController>().editAlarm(widget.alarm!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: Get.back, // 뒤로가기
+          onTap: Get.back,
           behavior: HitTestBehavior.translucent,
           child: Center(
             child: Text(
@@ -24,11 +43,12 @@ class AlarmWritePage extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.transparent,
-        title: Text('알람 추가', style: TextStyle(color: Colors.white)),
+        title: Text(widget.alarm != null ? '알람 편집' : '알람 추가',
+            style: TextStyle(color: Colors.white)),
         actions: [
           GestureDetector(
             onTap: () {
-              Get.find<AlarmController>().saveAlarm();
+              Get.find<AlarmController>().saveAlarm(id: widget.alarm?.id);
               Get.back();
             },
             child: Padding(
@@ -72,6 +92,7 @@ class AlarmWritePage extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextField(
+                    controller: hourController,
                     maxLength: 2,
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
@@ -107,6 +128,7 @@ class AlarmWritePage extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextField(
+                    controller: minuteController,
                     maxLength: 2,
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,

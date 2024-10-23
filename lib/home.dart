@@ -49,61 +49,65 @@ class Home extends StatelessWidget {
   }
 
   Widget _etcAlarm(AlarmModel alarm, bool isEditMode) {
-    print(alarm.id);
-    return Row(
-      children: [
-        if (isEditMode)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: GestureDetector(
-              onTap: () {
-                Get.find<AlarmController>().removeAlarm(alarm.id);
-              },
-              child: Icon(Icons.remove_circle, color: Colors.red),
+    return GestureDetector(
+      onTap: () {
+        Get.to(AlarmWritePage(alarm: alarm));
+      },
+      child: Row(
+        children: [
+          if (isEditMode)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: GestureDetector(
+                onTap: () {
+                  Get.find<AlarmController>().removeAlarm(alarm.id);
+                },
+                child: Icon(Icons.remove_circle, color: Colors.red),
+              ),
+            ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Color(0xff262629)))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(alarm.hour < 12 ? '오전' : '오후',
+                              style: TextStyle(
+                                  fontSize: 25, color: Color(0xff8d8d93))),
+                          SizedBox(width: 10),
+                          Text(
+                              '${alarm.hour.toString().padLeft(2, '0')}:${alarm.minute.toString().padLeft(2, '0')}',
+                              style: TextStyle(
+                                  fontSize: 60,
+                                  color: Color(0xff8d8d93),
+                                  height: 1,
+                                  letterSpacing: -3))
+                        ],
+                      ),
+                      Switch(
+                        onChanged: (value) {
+                          print(value);
+                        },
+                        value: alarm.isOn,
+                      ),
+                    ],
+                  ),
+                  Text('알람',
+                      style: TextStyle(fontSize: 18, color: Color(0xff8d8d93))),
+                ],
+              ),
             ),
           ),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xff262629)))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(alarm.hour < 12 ? '오전' : '오후',
-                            style: TextStyle(
-                                fontSize: 25, color: Color(0xff8d8d93))),
-                        SizedBox(width: 10),
-                        Text(
-                            '${alarm.hour.toString().padLeft(2, '0')}:${alarm.minute.toString().padLeft(2, '0')}',
-                            style: TextStyle(
-                                fontSize: 60,
-                                color: Color(0xff8d8d93),
-                                height: 1,
-                                letterSpacing: -3))
-                      ],
-                    ),
-                    Switch(
-                      onChanged: (value) {
-                        print(value);
-                      },
-                      value: alarm.isOn,
-                    ),
-                  ],
-                ),
-                Text('알람',
-                    style: TextStyle(fontSize: 18, color: Color(0xff8d8d93))),
-              ],
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
