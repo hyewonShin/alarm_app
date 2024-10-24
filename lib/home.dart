@@ -1,49 +1,91 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/alarm_controller.dart';
 import 'package:flutter_application_1/alarm_model.dart';
 import 'package:flutter_application_1/alarm_write_page.dart';
+import 'package:flutter_application_1/wheather_model.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
+  Future<WeatherModel?> loadWeatherApi() async {
+    final url = Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?lat=37.564214&lon=127.001699&appid=[본인apikey]');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return WeatherModel.fromJson(json.decode(response.body));
+    }
+    return null;
+  }
+
   Widget _wakeUpAlarm() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            '알람',
-            style: TextStyle(fontSize: 40),
-          ),
-          SizedBox(height: 15),
-          Text(
-            '🛌 수면 | 기상',
-            style: TextStyle(fontSize: 20),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '알람없음',
-                style: TextStyle(color: Color(0xff8d8d93), fontSize: 50),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xff262629),
+      child: FutureBuilder<WeatherModel?>(
+        future: loadWeatherApi(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  '서울 날씨',
+                  style: TextStyle(fontSize: 40),
                 ),
-                child: Text(
-                  '변경',
-                  style: TextStyle(color: Color(0xffff9f0a), fontSize: 16),
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Image.network(
+                      'https://openweathermap.org/img/wn/${snapshot.data!.icon}@2x.png',
+                      width: 100,
+                      height: 100,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${snapshot.data!.temp!.toStringAsFixed(1)}°',
+                          style: TextStyle(fontSize: 25, letterSpacing: -1),
+                        ),
+                        Text(
+                          '체감기온 : ${snapshot.data!.feelsLike!.toStringAsFixed(1)}°',
+                          style: TextStyle(fontSize: 17, letterSpacing: -1),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-            ],
-          )
-        ],
+                Row(
+                  children: [
+                    Text(
+                      '풍속 : ${snapshot.data!.speed!.toStringAsFixed(1)}m/s',
+                      style: TextStyle(
+                        color: Color(0xff8d8d93),
+                        fontSize: 20,
+                        letterSpacing: -1,
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Text(
+                      '기압 : ${snapshot.data!.pressure!.toStringAsFixed(1)}hPa',
+                      style: TextStyle(
+                        color: Color(0xff8d8d93),
+                        fontSize: 20,
+                        letterSpacing: -1,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }
